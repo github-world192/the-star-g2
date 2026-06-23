@@ -35,3 +35,4 @@ build/
 ### Local secrets ###
 .env
 application-local.yml
+*-sa-key.json
