@@ -1,38 +1,22 @@
 #!/usr/bin/env bash
-# Run this in GCP Cloud Shell (has Owner access to the project)
+# Run in GCP Cloud Shell for one-time project + VM setup
 set -euo pipefail
 
 export GCP_PROJECT_ID="${GCP_PROJECT_ID:-project-3590b91c-e095-4141-932}"
 export GCP_REGION="${GCP_REGION:-us-central1}"
 export GCE_HOST="${GCE_HOST:-34.173.119.243}"
 export APP_NAME="${APP_NAME:-the-star-g2}"
-export SA_NAME="${SA_NAME:-github-deploy}"
-SA_EMAIL="${SA_NAME}@${GCP_PROJECT_ID}.iam.gserviceaccount.com"
 
 gcloud config set project "${GCP_PROJECT_ID}"
 
 echo "==> Enable APIs"
-gcloud services enable artifactregistry.googleapis.com compute.googleapis.com iam.googleapis.com
+gcloud services enable artifactregistry.googleapis.com compute.googleapis.com
 
 echo "==> Create Artifact Registry"
 gcloud artifacts repositories create "${APP_NAME}" \
   --repository-format=docker \
   --location="${GCP_REGION}" \
   --description="Docker images for ${APP_NAME}" 2>/dev/null || true
-
-echo "==> Create GitHub deploy service account"
-gcloud iam service-accounts create "${SA_NAME}" \
-  --display-name="GitHub Actions deploy" 2>/dev/null || true
-
-for ROLE in roles/artifactregistry.writer roles/compute.viewer; do
-  gcloud projects add-iam-policy-binding "${GCP_PROJECT_ID}" \
-    --member="serviceAccount:${SA_EMAIL}" \
-    --role="${ROLE}" --quiet
-done
-
-echo "==> Create SA key (download this for GitHub secret GCP_SA_KEY)"
-gcloud iam service-accounts keys create "${APP_NAME}-sa-key.json" \
-  --iam-account="${SA_EMAIL}"
 
 INSTANCE=$(gcloud compute instances list \
   --filter="networkInterfaces.accessConfigs.natIP=${GCE_HOST}" \
@@ -60,22 +44,20 @@ fi
 
 cat <<EOF
 
-Done. Next:
+Done. Deploy flow (no CI/CD):
 
-1. GitHub → the-star-g2 → Settings → Secrets → Actions:
-   GCP_SA_KEY = paste contents of ${APP_NAME}-sa-key.json
-   GCE_SSH_KEY = your SSH private key for the VM
+1. On your laptop (with gcloud + docker):
+   GCP_PROJECT_ID=${GCP_PROJECT_ID} GCP_REGION=${GCP_REGION} ./scripts/docker-push.sh
 
-2. GitHub → Settings → Variables → Actions (if not set):
-   GCP_PROJECT_ID = ${GCP_PROJECT_ID}
-   GCP_REGION     = ${GCP_REGION}
-   GCE_HOST       = ${GCE_HOST}
-   GCE_USER       = your VM SSH username
-
-3. SSH into VM (${GCE_HOST}) and run:
+2. SSH into VM (${GCE_HOST}), one-time bootstrap:
    git clone https://github.com/github-world192/the-star-g2.git
    cd the-star-g2 && GCP_REGION=${GCP_REGION} ./scripts/gcp-vm-bootstrap.sh
-   sudo nano /opt/the-star-g2/.env   # add OAuth credentials
+   sudo nano /opt/${APP_NAME}/.env   # OAuth credentials
+
+3. On VM, pull and run:
+   export IMAGE=${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${APP_NAME}:latest
+   export GCP_REGION=${GCP_REGION}
+   bash /opt/${APP_NAME}/deploy.sh
 
 4. Google OAuth redirect URI:
    http://${GCE_HOST}/callback
