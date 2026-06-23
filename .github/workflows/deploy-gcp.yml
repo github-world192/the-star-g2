@@ -10,6 +10,10 @@ env:
   JAVA_VERSION: "21"
   APP_NAME: the-star-g2
   IMAGE_NAME: app
+  GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+  GCP_REGION: ${{ vars.GCP_REGION }}
+  GCE_HOST: ${{ vars.GCE_HOST }}
+  GCE_USER: ${{ vars.GCE_USER }}
 
 jobs:
   test:
@@ -47,11 +51,11 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Configure Docker for Artifact Registry
-        run: gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev --quiet
+        run: gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev --quiet
 
       - name: Build and push Docker image
         env:
-          IMAGE_TAG: ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.APP_NAME }}/${{ env.IMAGE_NAME }}
+          IMAGE_TAG: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.APP_NAME }}/${{ env.IMAGE_NAME }}
         run: |
           docker build -t "${IMAGE_TAG}:${{ github.sha }}" -t "${IMAGE_TAG}:latest" .
           docker push "${IMAGE_TAG}:${{ github.sha }}"
@@ -60,12 +64,12 @@ jobs:
       - name: Deploy to GCP VM
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.GCE_HOST }}
-          username: ${{ secrets.GCE_USER }}
+          host: ${{ env.GCE_HOST }}
+          username: ${{ env.GCE_USER }}
           key: ${{ secrets.GCE_SSH_KEY }}
           script_stop: true
           script: |
-            export IMAGE="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.APP_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+            export IMAGE="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.APP_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
             export APP_NAME="${{ env.APP_NAME }}"
-            export GCP_REGION="${{ secrets.GCP_REGION }}"
+            export GCP_REGION="${{ env.GCP_REGION }}"
             bash /opt/${{ env.APP_NAME }}/deploy.sh
