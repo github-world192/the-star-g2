@@ -1,6 +1,3 @@
-<img width="1399" height="690" alt="Screenshot 2026-06-23 at 9 38 46 AM" src="https://github.com/user-attachments/assets/64ab21d5-7764-4991-bbad-2dae9e573211" />
-<img width="1399" height="690" alt="Screenshot 2026-06-23 at 9 38 26 AM" src="https://github.com/user-attachments/assets/ec0a7ae1-5471-4d0d-85f0-f25e63491462" />
-<img width="1399" height="690" alt="Screenshot 2026-06-23 at 9 38 08 AM" src="https://github.com/user-attachments/assets/c9451b2a-4e73-4d5b-9a8d-ad72c9eeafa4" />
 先把專案複製下來
 使用antigravity 想辦法把專案跑起來(可能要安裝maven)
 登入畫面：
@@ -10,5 +7,10 @@
 登入成功
 <img width="1399" height="690" alt="Screenshot 2026-06-23 at 8 58 15 AM" src="https://github.com/user-attachments/assets/43938d27-c21e-439e-a121-f32820d79a62" />
 
+訂單完成後 可 查看自己的訂單
+<img width="1399" height="690" alt="Screenshot 2026-06-23 at 9 38 26 AM" src="https://github.com/user-attachments/assets/ec0a7ae1-5471-4d0d-85f0-f25e63491462" />
 
-
+也查看自己的購物
+<img width="1399" height="690" alt="Screenshot 2026-06-23 at 9 38 08 AM" src="https://github.com/user-attachments/assets/c9451b2a-4e73-4d5b-9a8d-ad72c9eeafa4" />
+更換帳號後 不會有相同的紀錄
+<img width="1399" height="690" alt="Screenshot 2026-06-23 at 9 38 46 AM" src="https://github.com/user-attachments/assets/64ab21d5-7764-4991-bbad-2dae9e573211" />
