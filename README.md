@@ -1,4 +1,3 @@
-
 先把專案複製下來
 使用antigravity 想辦法把專案跑起來(可能要安裝maven)
 登入畫面：
@@ -18,3 +17,6 @@
 
 更換帳號後 不會有相同的紀錄
 <img width="1399" height="690" alt="Screenshot 2026-06-23 at 9 38 46 AM" src="https://github.com/user-attachments/assets/64ab21d5-7764-4991-bbad-2dae9e573211" />
+需要準備的 git clone 完後你要新增一個.env 檔案
+把它貼上
+在line 裡面提供
