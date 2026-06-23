@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的訂單 - 東方之星 The Star</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="home-page">
+    <div th:replace="~{fragments/nav :: header('orders')}"></div>
+
+    <main class="page-content">
+        <div class="page-header">
+            <h1>我的訂單</h1>
+            <p>查看您的購物訂單紀錄。</p>
+        </div>
+
+        <div th:if="${orders.isEmpty()}" class="empty-state">
+            <p>目前尚無訂單紀錄。</p>
+            <a th:href="@{/shop}" class="btn btn-primary">前往購物</a>
+        </div>
+
+        <div th:if="${!orders.isEmpty()}" class="record-list">
+            <article class="record-card" th:each="order : ${orders}">
+                <div>
+                    <h3 th:text="'訂單 #' + ${order.id}">訂單 #1</h3>
+                    <p th:text="${#temporals.format(order.createdAt, 'yyyy/MM/dd HH:mm')}">建立時間</p>
+                    <p th:text="'NT$ ' + ${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')}">金額</p>
+                </div>
+                <div class="record-actions">
+                    <span class="status-badge" th:classappend="' status-' + ${#strings.toLowerCase(order.status.name())}"
+                          th:text="${order.status.name() == 'PAID' ? '已付款' : (order.status.name() == 'PENDING' ? '待付款' : '已取消')}">已付款</span>
+                    <a th:href="@{/my/orders/{id}(id=${order.id})}" class="btn btn-secondary">查看詳情</a>
+                </div>
+            </article>
+        </div>
+    </main>
+</body>
+</html>

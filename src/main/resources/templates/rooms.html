@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>線上訂房 - 東方之星 The Star</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="home-page">
+    <div th:replace="~{fragments/nav :: header('rooms')}"></div>
+
+    <main class="page-content">
+        <div class="page-header">
+            <h1>線上訂房</h1>
+            <p>選擇房型與日期，立即完成預訂。</p>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <div class="card-grid">
+            <article class="catalog-card" th:each="room : ${rooms}">
+                <div class="catalog-card-body">
+                    <h3 th:text="${room.name}">房型名稱</h3>
+                    <p class="catalog-desc" th:text="${room.description}">房型描述</p>
+                    <p class="catalog-meta">
+                        <span th:text="'可住 ' + ${room.capacity} + ' 人'">可住 2 人</span>
+                        <span class="price" th:text="'NT$ ' + ${#numbers.formatDecimal(room.pricePerNight, 0, 'COMMA', 0, 'POINT')} + ' / 晚'">NT$ 3,200 / 晚</span>
+                    </p>
+                </div>
+                <form th:action="@{/rooms/book}" method="post" class="booking-form">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <input type="hidden" name="roomId" th:value="${room.id}">
+
+                    <label th:for="'checkIn-' + ${room.id}">入住日期</label>
+                    <input type="date" th:id="'checkIn-' + ${room.id}" name="checkIn" required>
+
+                    <label th:for="'checkOut-' + ${room.id}">退房日期</label>
+                    <input type="date" th:id="'checkOut-' + ${room.id}" name="checkOut" required>
+
+                    <button type="submit" class="btn btn-primary">立即訂房</button>
+                </form>
+            </article>
+        </div>
+    </main>
+</body>
+</html>

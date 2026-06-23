@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的訂房 - 東方之星 The Star</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="home-page">
+    <div th:replace="~{fragments/nav :: header('bookings')}"></div>
+
+    <main class="page-content">
+        <div class="page-header">
+            <h1>我的訂房</h1>
+            <p>查看您的訂房紀錄與狀態。</p>
+        </div>
+
+        <div th:if="${bookings.isEmpty()}" class="empty-state">
+            <p>目前尚無訂房紀錄。</p>
+            <a th:href="@{/rooms}" class="btn btn-primary">前往訂房</a>
+        </div>
+
+        <div th:if="${!bookings.isEmpty()}" class="record-list">
+            <article class="record-card" th:each="booking : ${bookings}">
+                <div>
+                    <h3 th:text="${booking.roomName}">經典雙人房</h3>
+                    <p th:text="${#temporals.format(booking.checkIn, 'yyyy/MM/dd')} + ' — ' + ${#temporals.format(booking.checkOut, 'yyyy/MM/dd')}">日期</p>
+                    <p th:text="'NT$ ' + ${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT')}">金額</p>
+                </div>
+                <div class="record-actions">
+                    <span class="status-badge" th:classappend="' status-' + ${#strings.toLowerCase(booking.status.name())}"
+                          th:text="${booking.status.name() == 'CONFIRMED' ? '已確認' : '已取消'}">已確認</span>
+                    <a th:href="@{/my/bookings/{id}(id=${booking.id})}" class="btn btn-secondary">查看詳情</a>
+                </div>
+            </article>
+        </div>
+    </main>
+</body>
+</html>

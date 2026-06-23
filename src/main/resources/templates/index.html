@@ -7,24 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body class="home-page">
-    <header class="top-bar">
-        <div class="brand-inline">
-            <span class="brand-cn">東方之星</span>
-            <span class="brand-divider">|</span>
-            <span class="brand-en">THE STAR</span>
-        </div>
-
-        <div class="top-actions">
-            <button type="button" class="avatar-btn" id="profile-trigger" aria-label="個人資料">
-                <img th:if="${avatarUrl != null}" th:src="${avatarUrl}" alt="大頭貼" class="avatar-img">
-                <span th:if="${avatarUrl == null}" class="avatar-fallback"
-                      th:text="${user != null ? #strings.substring(user.name, 0, 1) : 'G'}">G</span>
-            </button>
-            <form th:action="@{/logout}" method="post">
-                <button type="submit" class="btn btn-outline">登出</button>
-            </form>
-        </div>
-    </header>
+    <div th:replace="~{fragments/nav :: header('home')}"></div>
 
     <main class="hero">
         <div class="hero-content">
@@ -32,18 +15,18 @@
             <h1 th:text="'歡迎，' + ${user != null ? user.name : '尊貴旅客'}">歡迎</h1>
             <p class="hero-desc">東方之星飯店管理系統，為您打造尊榮、舒適的星級住宿體驗。</p>
             <div class="hero-cards">
-                <article class="feature-card">
+                <a th:href="@{/rooms}" class="feature-card feature-card-link">
                     <h3>線上訂房</h3>
-                    <p>即將開放，輕鬆預訂您的理想房型。</p>
-                </article>
-                <article class="feature-card">
-                    <h3>客房服務</h3>
-                    <p>尊享貼心服務，滿足您的每一項需求。</p>
-                </article>
-                <article class="feature-card">
-                    <h3>會員專屬</h3>
-                    <p>累積住宿積分，解鎖更多星級禮遇。</p>
-                </article>
+                    <p>瀏覽房型、選擇日期，立即完成預訂。</p>
+                </a>
+                <a th:href="@{/shop}" class="feature-card feature-card-link">
+                    <h3>飯店購物</h3>
+                    <p>加購下午茶、SPA 與客房服務。</p>
+                </a>
+                <a th:href="@{/my/bookings}" class="feature-card feature-card-link">
+                    <h3>我的訂房</h3>
+                    <p>查看訂房紀錄，管理您的住宿安排。</p>
+                </a>
             </div>
         </div>
     </main>

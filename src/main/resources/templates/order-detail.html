@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂單詳情 - 東方之星 The Star</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="home-page">
+    <div th:replace="~{fragments/nav :: header('orders')}"></div>
+
+    <main class="page-content">
+        <div class="page-header">
+            <a th:href="@{/my/orders}" class="back-link">← 返回我的訂單</a>
+            <h1>訂單詳情</h1>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <article class="detail-card">
+            <dl class="detail-list">
+                <div>
+                    <dt>訂單編號</dt>
+                    <dd th:text="${order.id}">1</dd>
+                </div>
+                <div>
+                    <dt>狀態</dt>
+                    <dd>
+                        <span class="status-badge" th:classappend="' status-' + ${#strings.toLowerCase(order.status.name())}"
+                              th:text="${order.status.name() == 'PAID' ? '已付款' : (order.status.name() == 'PENDING' ? '待付款' : '已取消')}">已付款</span>
+                    </dd>
+                </div>
+                <div>
+                    <dt>總金額</dt>
+                    <dd th:text="'NT$ ' + ${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')}">NT$ 880</dd>
+                </div>
+                <div>
+                    <dt>建立時間</dt>
+                    <dd th:text="${#temporals.format(order.createdAt, 'yyyy/MM/dd HH:mm')}">2026/06/23 10:00</dd>
+                </div>
+            </dl>
+
+            <h2 class="detail-subtitle">商品明細</h2>
+            <div class="record-list">
+                <article class="record-card" th:each="item : ${order.items}">
+                    <div>
+                        <h3 th:text="${item.productName}">商品名稱</h3>
+                        <p th:text="'單價 NT$ ' + ${#numbers.formatDecimal(item.unitPrice, 0, 'COMMA', 0, 'POINT')} + ' × ' + ${item.quantity}">單價 × 數量</p>
+                    </div>
+                    <div class="record-actions">
+                        <span class="price" th:text="'NT$ ' + ${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')}">小計</span>
+                    </div>
+                </article>
+            </div>
+
+            <form th:if="${order.status.name() == 'PAID'}"
+                  th:action="@{/my/orders/{id}/cancel(id=${order.id})}" method="post" class="detail-actions">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit" class="btn btn-secondary" onclick="return confirm('確定要取消此訂單嗎？')">取消訂單</button>
+            </form>
+        </article>
+    </main>
+</body>
+</html>

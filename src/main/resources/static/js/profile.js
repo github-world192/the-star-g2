@@ -1,6 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
     var modal = document.getElementById('profile-modal');
     var trigger = document.getElementById('profile-trigger');
+
+    if (!modal || !trigger) {
+        return;
+    }
+
     var closeBtn = document.getElementById('profile-close');
     var cancelBtn = document.getElementById('profile-cancel');
     var avatarInput = document.getElementById('avatarUrl');

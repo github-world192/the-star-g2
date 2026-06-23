@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飯店購物 - 東方之星 The Star</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="home-page">
+    <div th:replace="~{fragments/nav :: header('shop')}"></div>
+
+    <main class="page-content">
+        <div class="page-header">
+            <h1>飯店購物</h1>
+            <p>加購客房服務與尊榮體驗。</p>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <div class="card-grid">
+            <article class="catalog-card" th:each="product : ${products}">
+                <div class="catalog-card-body">
+                    <h3 th:text="${product.name}">商品名稱</h3>
+                    <p class="catalog-desc" th:text="${product.description}">商品描述</p>
+                    <p class="catalog-meta">
+                        <span th:text="'庫存 ' + ${product.stock}">庫存 50</span>
+                        <span class="price" th:text="'NT$ ' + ${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')}">NT$ 880</span>
+                    </p>
+                </div>
+                <form th:action="@{/shop/order}" method="post" class="order-form">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <input type="hidden" name="productId" th:value="${product.id}">
+
+                    <label th:for="'qty-' + ${product.id}">數量</label>
+                    <input type="number" th:id="'qty-' + ${product.id}" name="quantity" min="1" th:max="${product.stock}" value="1" required>
+
+                    <button type="submit" class="btn btn-primary" th:disabled="${product.stock == 0}">立即購買</button>
+                </form>
+            </article>
+        </div>
+    </main>
+</body>
+</html>
