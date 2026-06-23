@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登入 - 東方之星 The Star</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+    <div class="auth-backdrop"></div>
+    <main class="auth-card">
+        <div class="brand">
+            <p class="brand-cn">東方之星</p>
+            <p class="brand-en">THE STAR</p>
+            <p class="brand-tagline">尊享奢華 · 星級體驗</p>
+        </div>
+
+        <p class="subtitle">使用 Google 帳號登入管理系統</p>
+
+        <div th:if="${param.error}" class="alert alert-error">登入失敗，請再試一次。</div>
+        <div th:if="${param.logout}" class="alert alert-success">已成功登出。</div>
+
+        <div class="oauth-buttons">
+            <a class="btn btn-google" th:href="@{/oauth2/authorization/google}">
+                <span class="btn-icon">G</span>
+                使用 Google 登入
+            </a>
+        </div>
+    </main>
+</body>
+</html>
