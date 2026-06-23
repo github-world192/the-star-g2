@@ -13,7 +13,7 @@
 購物頁面
 <img width="1399" height="690" alt="Screenshot 2026-06-23 at 9 42 33 AM" src="https://github.com/user-attachments/assets/5632cf75-08ed-4dd2-bcfc-70b4c074da31" />
 
-也查看自己的購物
+也查看自己的訂房
 <img width="1399" height="690" alt="Screenshot 2026-06-23 at 9 38 08 AM" src="https://github.com/user-attachments/assets/c9451b2a-4e73-4d5b-9a8d-ad72c9eeafa4" />
 
 更換帳號後 不會有相同的紀錄
