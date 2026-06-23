@@ -13,11 +13,15 @@ if [[ ! -f "${ENV_FILE}" ]]; then
   exit 1
 fi
 
-echo "==> Authenticating Docker with Artifact Registry"
-gcloud auth configure-docker "${GCP_REGION:?GCP_REGION is required}-docker.pkg.dev" --quiet
+if [[ "${DEPLOY_SOURCE:-registry}" == "local" ]]; then
+  echo "==> Using pre-loaded local image ${IMAGE}"
+else
+  echo "==> Authenticating Docker with Artifact Registry"
+  gcloud auth configure-docker "${GCP_REGION:?GCP_REGION is required}-docker.pkg.dev" --quiet
 
-echo "==> Pulling ${IMAGE}"
-docker pull "${IMAGE}"
+  echo "==> Pulling ${IMAGE}"
+  docker pull "${IMAGE}"
+fi
 
 echo "==> Stopping old container"
 docker stop "${CONTAINER_NAME}" 2>/dev/null || true
