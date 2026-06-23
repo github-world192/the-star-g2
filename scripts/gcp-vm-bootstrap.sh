@@ -4,7 +4,6 @@ set -euo pipefail
 
 APP_NAME="${APP_NAME:-the-star-g2}"
 APP_DIR="/opt/${APP_NAME}"
-GCP_REGION="${GCP_REGION:?Set GCP_REGION, e.g. asia-east1}"
 
 echo "==> Installing Docker"
 sudo apt-get update
@@ -19,15 +18,6 @@ echo \
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo usermod -aG docker "${USER}"
-
-echo "==> Installing Google Cloud CLI (if missing)"
-if ! command -v gcloud >/dev/null 2>&1; then
-  curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
-  echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | \
-    sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list
-  sudo apt-get update
-  sudo apt-get install -y google-cloud-cli
-fi
 
 echo "==> Creating app directory"
 sudo mkdir -p "${APP_DIR}"
@@ -45,14 +35,12 @@ EOF
   echo "Created ${APP_DIR}/.env — edit with real OAuth credentials."
 fi
 
-echo "==> Configuring Docker auth for Artifact Registry"
-gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
-
 echo ""
 echo "Bootstrap complete. Next steps:"
 echo "  1. Edit ${APP_DIR}/.env with OAuth credentials"
 echo "  2. Log out and back in (for docker group)"
-echo "  3. Deploy an image:"
-echo "       export IMAGE=${GCP_REGION}-docker.pkg.dev/PROJECT_ID/${APP_NAME}:latest"
-echo "       export GCP_REGION=${GCP_REGION}"
+echo "  3. Deploy an image from Docker Hub:"
+echo "       export IMAGE=youruser/${APP_NAME}:latest"
 echo "       bash ${APP_DIR}/deploy.sh"
+echo ""
+echo "  If the image is private, run 'docker login' on this VM first."

@@ -1,20 +1,23 @@
 #!/usr/bin/env bash
-# Build locally and push to GCP Artifact Registry
+# Build locally and push to Docker Hub
 set -euo pipefail
 
 APP_NAME="${APP_NAME:-the-star-g2}"
-GCP_PROJECT_ID="${GCP_PROJECT_ID:?Set GCP_PROJECT_ID}"
-GCP_REGION="${GCP_REGION:-asia-east1}"
+DOCKERHUB_USER="${DOCKERHUB_USER:?Set DOCKERHUB_USER}"
 IMAGE_TAG="${IMAGE_TAG:-latest}"
 
-REGISTRY="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${APP_NAME}"
-IMAGE="${REGISTRY}/${APP_NAME}:${IMAGE_TAG}"
+IMAGE="${DOCKERHUB_USER}/${APP_NAME}:${IMAGE_TAG}"
 
 echo "==> Building ${IMAGE}"
 docker build -t "${IMAGE}" .
 
-echo "==> Authenticating Docker with Artifact Registry"
-gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+if [[ -n "${DOCKERHUB_TOKEN:-}" ]]; then
+  echo "==> Logging in to Docker Hub"
+  echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USER}" --password-stdin
+else
+  echo "==> Logging in to Docker Hub (interactive)"
+  docker login -u "${DOCKERHUB_USER}"
+fi
 
 echo "==> Pushing ${IMAGE}"
 docker push "${IMAGE}"
@@ -25,5 +28,4 @@ echo "  IMAGE=${IMAGE}"
 echo ""
 echo "On GCP VM, deploy with:"
 echo "  export IMAGE=${IMAGE}"
-echo "  export GCP_REGION=${GCP_REGION}"
 echo "  bash /opt/${APP_NAME}/deploy.sh"

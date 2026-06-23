@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Pull image from Artifact Registry and run on GCP VM
+# Pull image from Docker Hub and run on GCP VM
 set -euo pipefail
 
 APP_NAME="${APP_NAME:-the-star-g2}"
-IMAGE="${IMAGE:?IMAGE is required, e.g. asia-east1-docker.pkg.dev/PROJECT/the-star-g2:latest}"
+IMAGE="${IMAGE:?IMAGE is required, e.g. youruser/the-star-g2:latest}"
 ENV_FILE="/opt/${APP_NAME}/.env"
 CONTAINER_NAME="${APP_NAME}"
 HOST_PORT="${HOST_PORT:-80}"
@@ -13,11 +13,6 @@ if [[ ! -f "${ENV_FILE}" ]]; then
   echo "Missing ${ENV_FILE}. Create it before first deploy."
   exit 1
 fi
-
-echo "==> Authenticating Docker with Artifact Registry"
-REGISTRY_HOST="${IMAGE%%/*}"
-GCP_REGION="${GCP_REGION:-${REGISTRY_HOST%%-docker.pkg.dev}}"
-gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
 
 echo "==> Pulling ${IMAGE}"
 docker pull "${IMAGE}"
